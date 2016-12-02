@@ -4,7 +4,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -14,7 +14,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class job4 {
 
   public static class Mapper1
-       extends Mapper<LongWritable, Text, Text, IntWritable>{
+       extends Mapper<LongWritable, Text, Text, NullWritable>{
 
     private final static IntWritable one = new IntWritable(1);
     private Text cited = new Text();
@@ -27,13 +27,13 @@ public class job4 {
         String[] line = value.toString().split("\\s");
         if ((line.length>12) && (line[10].equals("404"))){
             cited.set(line[4]);
-         context.write(cited, one);
+         context.write(cited, new NullWritable.get());
         }
 }
   }
 
   public static class Reducer1
-       extends Reducer<Text,IntWritable,Text,IntWritable> {
+       extends Reducer<Text,NullWritable,Text,IntWritable> {
     private IntWritable result = new IntWritable();
 
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
@@ -53,6 +53,7 @@ public class job4 {
     job.setMapperClass(Mapper1.class);
     job.setCombinerClass(Reducer1.class);
     job.setReducerClass(Reducer1.class);
+    job.setNumReduceTasks(0);
     //job.setSortComparatorClass(SortKeyComparator.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(IntWritable.class);
