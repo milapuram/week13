@@ -120,3 +120,4 @@ import org.apache.hadoop.util.StringUtils;
     System.exit(job.waitForCompletion(true) ? 0 : 1);
   }
 }
+//output: /xmlrpc.php	234891524
