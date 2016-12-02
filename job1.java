@@ -22,7 +22,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
     public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException {
         String [] line = value.toString().split("\\s",14);
-           if (line.length>10 &&line[8]!= "64.131.111.16"){
+           if (line.length>10 &&line[8].equals("64.131.111.16")){
                 cited= new Text(line[8]);
             context.write(cited, one);
     }
