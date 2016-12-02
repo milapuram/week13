@@ -22,7 +22,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
     public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException {
         String [] line = value.toString().split("\\s",14);
-           if (line.length>10){
+           if (line.length>10 &&line[8]!= "64.131.111.16"){
                 cited= new Text(line[8]);
             context.write(cited, one);
     }
@@ -83,7 +83,7 @@ public static void main(String[] args) throws Exception {
         IntWritable.class,
         mapper2Config
         );
-    job.setJarByClass(job2.class);
+    job.setJarByClass(job1.class);
    // job.setMapperClass(Mapper1.class);
     job.setCombinerClass(Reducer1.class);
     job.setReducerClass(Reducer1.class);
