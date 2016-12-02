@@ -1,4 +1,4 @@
-mport java.io.IOException;
+import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.conf.Configuration;
