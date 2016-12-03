@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -58,6 +59,8 @@ public class job2 {
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "Job 2 FrequentPage");
     job.setJarByClass(job2.class);
+    /*[*/FileOutputFormat.setCompressOutput(job, true);
+    FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);/*]*/
 
     job.setMapperClass(Mapper1.class);
     job.setCombinerClass(Reducer1.class);
