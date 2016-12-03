@@ -25,32 +25,41 @@ public class job3 {
           context.write(new Text(sv), one);*/
 
         String[] line = value.toString().split("\\s");
-        if (line.length>10){
-        
-          String sv = line[0];
-          string sv1= sv1.substring(0,7);
-            
-          string cited=line[4];
+        if (line[0].charAt(0) != '#' && !line[4].equals("/")){
 
-          context.write(new Text(sv + "\t" + cited), one);
+          String sv = line[0];
+          String sv1= sv.substring(0,7);
+          String cited=line[4];
+          context.write(new Text(sv + ":" + cited), one);
         }
     }
   }
-  public static class Reducer1
-       extends Reducer<Text,IntWritable,Text,IntWritable> {
-    private IntWritable result = new IntWritable();
+
+  public static class Reducer1 extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+        private static int fvalue = 0;
+        private static Text fkey = new Text();
+        private static IntWritable max_value = new IntWritable();
 
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
       int sum = 0;
       for (IntWritable val : values) {
         sum += val.get();
       }
-      result.set(sum);
-      context.write(key, result);
+          if(sum > fvalue)
+          {
+                  fvalue = sum;
+                  fkey.set(key);
+                  max_value.set(sum);
+          }
     }
+        @Override
+        protected void cleanup(Context context) throws IOException, InterruptedException
+        {
+                context.write(fkey, max_value);
+        }
   }
-
-  public static void main(String[] args) throws Exception {
+public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "job1");
     job.setJarByClass(job3.class);
@@ -65,3 +74,4 @@ public class job3 {
     System.exit(job.waitForCompletion(true) ? 0 : 1);
   }
 }
+                         
