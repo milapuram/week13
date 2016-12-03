@@ -8,6 +8,7 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
@@ -53,6 +54,8 @@ public class job4 {
   //  job.setCombinerClass(Reducer1.class);
     //job.setReducerClass(Reducer1.class);
     job.setNumReduceTasks(0);
+    /*[*/FileOutputFormat.setCompressOutput(job, true);
+    FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);/*]*/
     //job.setSortComparatorClass(SortKeyComparator.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(NullWritable.class);
