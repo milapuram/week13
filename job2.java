@@ -50,7 +50,7 @@ public class job2 {
         @Override
         protected void cleanup(Context context) throws IOException, InterruptedException
         {
-                context.write(fkey, fvalue);
+                context.write(fkey, max_value);
         }
   } // end of Reducer class
 
