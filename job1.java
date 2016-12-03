@@ -8,6 +8,7 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.chain.ChainMapper;
@@ -69,6 +70,8 @@ public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "job1");
     job.setJarByClass(job1.class);
+    /*[*/FileOutputFormat.setCompressOutput(job, true);
+    FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);/*]*/
     job.setMapperClass(Mapper1.class);
     job.setCombinerClass(Reducer1.class);
     job.setReducerClass(Reducer1.class);
