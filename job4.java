@@ -25,13 +25,13 @@ public class job4 {
           context.write(new Text(sv), one);*/
 
         String[] line = value.toString().split("\\s");
-        if ((line.length>12) && (line[10].equals("404"))){
+        if (line[0].charAt(0)!='#' && line[10].equals("404")){
             cited.set(line[4]);
          context.write(cited, new NullWritable.get());
         }
-}
+    }
   }
-
+ 
   public static class Reducer1
        extends Reducer<Text,NullWritable,Text,IntWritable> {
     private IntWritable result = new IntWritable();
@@ -53,7 +53,6 @@ public class job4 {
     job.setMapperClass(Mapper1.class);
     job.setCombinerClass(Reducer1.class);
     job.setReducerClass(Reducer1.class);
-    job.setNumReduceTasks(0);
     //job.setSortComparatorClass(SortKeyComparator.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(IntWritable.class);
@@ -62,3 +61,4 @@ public class job4 {
     System.exit(job.waitForCompletion(true) ? 0 : 1);
   }
 }
+
