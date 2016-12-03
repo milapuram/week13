@@ -25,11 +25,11 @@ public class job5 {
           context.write(new Text(sv), one);*/
 
         String[] line = value.toString().split("\\s");
-        if ((line.length>10)&&(line[10].equals("200"))){
+        if (line[0].charAt(0) != '#' && line[10].equals("200")){
 
           String sv = line[0];
-          String sv1= sv.substring(0,7);
-          context.write(new Text(sv1), one);
+          //String sv1= sv.substring(0,7);
+          context.write(new Text(sv), one);
         }
     }
   }
