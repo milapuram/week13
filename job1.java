@@ -21,28 +21,39 @@ import org.apache.hadoop.util.GenericOptionsParser;
     private Text cited = new Text();
 
     public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException {
-        String [] line = value.toString().split("\\s",14);
-           if (line.length>10 &&line[8].equals("64.131.111.16")){
+        String [] line = value.toString().split("\\s");
+           if (line[0].charAt(0) !='#' &&line[8].equals("64.131.111.16")){
                 cited= new Text(line[8]);
             context.write(cited, one);
     }
     }
   }
 
-  public static class Mapper2 extends Mapper<Text,IntWritable,Text,IntWritable> {
-   // @Override
-        private IntWritable result = new IntWritable();
-    public void map(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+    public static class Reducer1 extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+        private static int fvalue = 0;
+        private static Text fkey = new Text();
+        private static IntWritable max_value = new IntWritable();
+
+    public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
       int sum = 0;
       for (IntWritable val : values) {
         sum += val.get();
       }
-      result.set(sum);
-      context.write(key, result);
+          if(sum > fvalue)
+          {
+                  fvalue = sum;
+                  fkey.set(key);
+                  max_value.set(sum);
+          }
     }
+        @Override
+        protected void cleanup(Context context) throws IOException, InterruptedException
+        {
+                context.write(fkey, max_value);
+        }
   }
-
-  public static class Reducer1
+ /* public static class Reducer1
        extends Reducer<Text,IntWritable,Text,IntWritable> {
     private IntWritable result = new IntWritable();
 
@@ -53,48 +64,22 @@ import org.apache.hadoop.util.GenericOptionsParser;
     }
     context.write(key, new IntWritable(maxValue));
     }
-  }
+  }*/
 public static void main(String[] args) throws Exception {
-    Configuration config = new Configuration();
-    String[] otherArgs = new GenericOptionsParser(config, args).getRemainingArgs();
-    if (otherArgs.length != 2) {
-    System.err.print("Useage: wordcount <in> <out>");
-    System.exit(2);
-      }
-    Job job = Job.getInstance();
-    ChainMapper chainMapper = new ChainMapper();
-    Configuration mapper1Config=new Configuration(false);
-    chainMapper.addMapper(
-        job,
-        Mapper1.class,
-        LongWritable.class,
-        Text.class,
-        Text.class,
-        IntWritable.class,
-        mapper1Config
-        );
-    Configuration mapper2Config=new Configuration(false);
-    chainMapper.addMapper(
-        job,
-        Mapper2.class,
-        Text.class,
-        IntWritable.class,
-        Text.class,
-        IntWritable.class,
-        mapper2Config
-        );
+    Configuration conf = new Configuration();
+    Job job = Job.getInstance(conf, "job1");
     job.setJarByClass(job1.class);
-   // job.setMapperClass(Mapper1.class);
+    job.setMapperClass(Mapper1.class);
     job.setCombinerClass(Reducer1.class);
     job.setReducerClass(Reducer1.class);
+    //job.setSortComparatorClass(SortKeyComparator.class);
     job.setOutputKeyClass(Text.class);
-   // job.setNumReduceTasks(0);
     job.setOutputValueClass(IntWritable.class);
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
     System.exit(job.waitForCompletion(true) ? 0 : 1);
   }
 }
-
+                         
 //output:104.197.195.206 205464
 
