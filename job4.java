@@ -14,7 +14,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class job4 {
 
   public static class Mapper1
-       extends Mapper<LongWritable, Text, Text, NullWritable>{
+       extends Mapper<LongWritable, Text, Text, IntWritable>{
 
     private final static IntWritable one = new IntWritable(1);
     private Text cited = new Text();
@@ -27,13 +27,13 @@ public class job4 {
         String[] line = value.toString().split("\\s");
         if (line[0].charAt(0)!='#' && line[10].equals("404")){
             cited.set(line[4]);
-         context.write(cited, new NullWritable.get());
+         context.write(cited, one);
         }
     }
   }
  
   public static class Reducer1
-       extends Reducer<Text,NullWritable,Text,IntWritable> {
+       extends Reducer<Text,IntWritable,Text,IntWritable> {
     private IntWritable result = new IntWritable();
 
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
